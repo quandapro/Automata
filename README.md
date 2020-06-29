@@ -9,7 +9,7 @@ python Automata.py
 ## Simple Flex Bison Compiler
 ```
 <identifier> = <natural integer>
-<identifier> * <natural integer>
+<identifier> <operator (+-*/)> <natural integer>
 <natural integer> (This output is the result of the above expression)
 ```
 * To compile and run this program
