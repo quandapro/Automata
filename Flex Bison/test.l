@@ -10,15 +10,15 @@
 void showError();
 %}
 
+whitespace  [ \t\n]
 number      [0-9]+
-identifier  ^[^\d\W]\w*
+identifier  [_a-zA-Z][_a-zA-Z0-9]{0,30}
 
 %%
-
-{number}        {yylval.ival=atoi(yytext); return(NUM);}
+{whitespace}
 {identifier}    {sscanf(yytext, "%s", yylval.iden); return(ID);}
+{number}        {yylval.ival=atoi(yytext); return(NUM);}
 
-\n		        {return NEWLINE;}
 "="             {return(EQ);}
 "+"             {return(OP_PLUS);}
 "-"             {return(OP_MINUS);}

@@ -128,8 +128,8 @@ typedef union YYSTYPE
 /* Line 387 of yacc.c  */
 #line 11 "test.y"
 
-    int ival;
     char iden[20];
+    int ival;
 
 
 /* Line 387 of yacc.c  */
@@ -381,7 +381,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   15
+#define YYLAST   13
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  11
@@ -390,7 +390,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  10
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  20
+#define YYNSTATES  19
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -436,16 +436,16 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     4,     7,    11,    15,    18,    21,    24,
-      27
+       0,     0,     3,     4,     7,    10,    14,    17,    20,    23,
+      26
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      12,     0,    -1,    -1,    12,    13,    -1,    14,    10,    15,
-      -1,     4,     5,     3,    -1,     4,    16,    -1,     6,     3,
-      -1,     7,     3,    -1,     8,     3,    -1,     9,     3,    -1
+      12,     0,    -1,    -1,    12,    13,    -1,    14,    15,    -1,
+       4,     5,     3,    -1,     4,    16,    -1,     6,     3,    -1,
+       7,     3,    -1,     8,     3,    -1,     9,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
@@ -487,7 +487,7 @@ static const yytype_uint8 yyr1[] =
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     2,     3,     3,     2,     2,     2,     2,
+       0,     2,     0,     2,     2,     3,     2,     2,     2,     2,
        2
 };
 
@@ -496,29 +496,29 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     0,     3,     0,     0,     0,     5,     0,
-       4,     0,     0,     0,     0,     6,     7,     8,     9,    10
+       2,     0,     1,     0,     3,     0,     0,     0,     4,     5,
+       0,     0,     0,     0,     6,     7,     8,     9,    10
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     4,     5,    10,    15
+      -1,     1,     4,     5,     8,    14
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -9
+#define YYPACT_NINF -5
 static const yytype_int8 yypact[] =
 {
-      -9,     0,    -9,    -4,    -9,    -8,     6,     7,    -9,    -1,
-      -9,     9,    10,    11,    12,    -9,    -9,    -9,    -9,    -9
+      -5,     0,    -5,    -4,    -5,    -2,     6,    -1,    -5,    -5,
+       7,     8,     9,    10,    -5,    -5,    -5,    -5,    -5
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -9,    -9,    -9,    -9,    -9,    -9
+      -5,    -5,    -5,    -5,    -5,    -5
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -527,28 +527,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       2,     6,     7,     0,     3,    11,    12,    13,    14,     8,
-       0,     9,    16,    17,    18,    19
+       2,     6,     7,     0,     3,    10,    11,    12,    13,     9,
+      15,    16,    17,    18
 };
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-9)))
+  (!!((Yystate) == (-5)))
 
 #define yytable_value_is_error(Yytable_value) \
   YYID (0)
 
 static const yytype_int8 yycheck[] =
 {
-       0,     5,    10,    -1,     4,     6,     7,     8,     9,     3,
-      -1,     4,     3,     3,     3,     3
+       0,     5,     4,    -1,     4,     6,     7,     8,     9,     3,
+       3,     3,     3,     3
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    12,     0,     4,    13,    14,     5,    10,     3,     4,
-      15,     6,     7,     8,     9,    16,     3,     3,     3,     3
+       0,    12,     0,     4,    13,    14,     5,     4,    15,     3,
+       6,     7,     8,     9,    16,     3,     3,     3,     3
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1351,20 +1351,20 @@ yyreduce:
         case 4:
 /* Line 1792 of yacc.c  */
 #line 33 "test.y"
-    { printf("%d", (yyvsp[(3) - (3)].ival)); exit(0); }
+    { printf("%d", (yyvsp[(2) - (2)].ival)); exit(0); }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
 #line 37 "test.y"
-    { sscanf((yyvsp[(1) - (3)].iden), "%s", id); value = (yyvsp[(3) - (3)].ival); }
+    { sscanf((yyvsp[(1) - (3)].iden), "%s", id); value = (yyvsp[(3) - (3)].ival);}
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
 #line 40 "test.y"
     { 
-        if (strcmp((yyvsp[(1) - (2)].iden), id)) {printf("Variable %s is not declared", (yyvsp[(1) - (2)].iden)); exit(0);};
+        if (strcmp((yyvsp[(1) - (2)].iden), id)) {printf("Variable \"%s\" is not declared", (yyvsp[(1) - (2)].iden)); exit(0);};
         (yyval.ival) = (yyvsp[(2) - (2)].ival);
     }
     break;

@@ -9,8 +9,8 @@ int value;
 %}
 
 %union {
-    int ival;
     char iden[20];
+    int ival;
 }
 
 %token NUM 
@@ -30,15 +30,15 @@ Input:
 ;
 
 Line: 
-    Declaration NEWLINE Expression { printf("%d", $3); exit(0); }
+    Declaration Expression { printf("%d", $2); exit(0); }
 ;
 
 Declaration: 
-    ID EQ NUM { sscanf($1, "%s", id); value = $3; }
+    ID EQ NUM { sscanf($1, "%s", id); value = $3;}
 ;
 Expression: 
     ID cmi { 
-        if (strcmp($1, id)) {printf("Variable %s is not declared", $1); exit(0);};
+        if (strcmp($1, id)) {printf("Variable \"%s\" is not declared", $1); exit(0);};
         $$ = $2;
     }
 ;

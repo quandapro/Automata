@@ -64,8 +64,8 @@ typedef union YYSTYPE
 /* Line 2058 of yacc.c  */
 #line 11 "test.y"
 
-    int ival;
     char iden[20];
+    int ival;
 
 
 /* Line 2058 of yacc.c  */
