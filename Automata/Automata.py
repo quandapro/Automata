@@ -1,7 +1,8 @@
 import numpy as np
+import json
 
 '''
-    Class Otomat 
+    Thuật toán tối thiểu hóa Otomat
 '''
 class Otomat:
     def __init__(self, sigma, S, S0, F, delta):
