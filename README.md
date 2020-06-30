@@ -1,5 +1,5 @@
-# Finite State Automata Minimize and Simple Flex Bison Compiler
-## Finite Automata Minimize
+# Finite State Automata Minimization and Simple Flex Bison Compiler
+## Finite Automata Minimization
 * Automata is stored in Automata/test.txt
 * To minimize finite state automata in test.txt, simply run:
 ```bash
