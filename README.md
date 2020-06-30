@@ -1,7 +1,7 @@
-# Finite Automata Minimalize and Simple Flex Bison Compiler
-## Finite Automata Minimalize
+# Finite State Automata Minimize and Simple Flex Bison Compiler
+## Finite Automata Minimize
 * Automata is stored in Automata/test.txt
-* To mininalize, simply run:
+* To minimize finite state automata in test.txt, simply run:
 ```bash
 cd Automata
 python Automata.py
