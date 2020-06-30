@@ -67,6 +67,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int yylex();
 int yyerror(char *s);
@@ -74,7 +75,7 @@ char id[20];
 int value;
 
 /* Line 371 of yacc.c  */
-#line 78 "test.tab.c"
+#line 79 "test.tab.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -126,14 +127,14 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 11 "test.y"
+#line 12 "test.y"
 
     char iden[20];
     int ival;
 
 
 /* Line 387 of yacc.c  */
-#line 137 "test.tab.c"
+#line 138 "test.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -161,7 +162,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 165 "test.tab.c"
+#line 166 "test.tab.c"
 
 #ifdef short
 # undef short
@@ -451,8 +452,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    28,    28,    29,    33,    37,    40,    47,    48,    49,
-      50
+       0,    29,    29,    30,    34,    38,    41,    48,    49,    50,
+      51
 };
 #endif
 
@@ -1350,19 +1351,19 @@ yyreduce:
     {
         case 4:
 /* Line 1792 of yacc.c  */
-#line 33 "test.y"
+#line 34 "test.y"
     { printf("%d", (yyvsp[(2) - (2)].ival)); exit(0); }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 37 "test.y"
+#line 38 "test.y"
     { sscanf((yyvsp[(1) - (3)].iden), "%s", id); value = (yyvsp[(3) - (3)].ival);}
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 40 "test.y"
+#line 41 "test.y"
     { 
         if (strcmp((yyvsp[(1) - (2)].iden), id)) {printf("Variable \"%s\" is not declared", (yyvsp[(1) - (2)].iden)); exit(0);};
         (yyval.ival) = (yyvsp[(2) - (2)].ival);
@@ -1371,31 +1372,31 @@ yyreduce:
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 47 "test.y"
+#line 48 "test.y"
     { (yyval.ival) = value + (yyvsp[(2) - (2)].ival); }
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 48 "test.y"
+#line 49 "test.y"
     { (yyval.ival) = value - (yyvsp[(2) - (2)].ival); }
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 49 "test.y"
+#line 50 "test.y"
     { (yyval.ival) = value * (yyvsp[(2) - (2)].ival); }
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 50 "test.y"
+#line 51 "test.y"
     { (yyval.ival) = value / (yyvsp[(2) - (2)].ival); }
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 1399 "test.tab.c"
+#line 1400 "test.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1627,7 +1628,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 52 "test.y"
+#line 53 "test.y"
 
 
 int yyerror(char *s)
