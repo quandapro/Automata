@@ -354,8 +354,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 10
-#define YY_END_OF_BUFFER 11
+#define YY_NUM_RULES 11
+#define YY_END_OF_BUFFER 12
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -365,8 +365,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[46] =
     {   0,
-        0,    0,   11,    9,    1,    1,    7,    5,    6,    8,
-        3,    4,    2,    3,    2,    2,    2,    2,    2,    2,
+        0,    0,   12,   10,    1,    4,    8,    6,    7,    9,
+        3,    5,    2,    3,    2,    2,    2,    2,    2,    2,
         2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
         2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
         2,    2,    2,    2,    0
@@ -754,7 +754,6 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
-/* rule 1 can match eol */
 YY_RULE_SETUP
 #line 18 "test.l"
 
@@ -770,41 +769,47 @@ YY_RULE_SETUP
 {yylval.ival=atoi(yytext); return(NUM);}
 	YY_BREAK
 case 4:
+/* rule 4 can match eol */
 YY_RULE_SETUP
 #line 22 "test.l"
-{return(EQ);}
+{return(NEWLINE);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 23 "test.l"
-{return(OP_PLUS);}
+{return(EQ);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 24 "test.l"
-{return(OP_MINUS);}
+{return(OP_PLUS);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 25 "test.l"
-{return(OP_MUL);}
+{return(OP_MINUS);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 26 "test.l"
-{return(OP_DIV);}
+{return(OP_MUL);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 27 "test.l"
-{showError(); return *yytext;}
+{return(OP_DIV);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "test.l"
+#line 28 "test.l"
+{showError(); return *yytext;}
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 30 "test.l"
 ECHO;
 	YY_BREAK
-#line 807 "lex.yy.c"
+#line 812 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1809,7 +1814,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 29 "test.l"
+#line 30 "test.l"
 
 
 void showError()

@@ -31,7 +31,7 @@ Input:
 ;
 
 Line: 
-    Declaration Expression { printf("%d", $2); exit(0); }
+    Declaration NEWLINE Expression { printf("%d", $3); exit(0); }
 ;
 
 Declaration: 
@@ -39,7 +39,7 @@ Declaration:
 ;
 Expression: 
     ID cmi { 
-        if (strcmp($1, id)) {printf("Variable \"%s\" is not declared", $1); exit(0);};
+        if (strcmp($1, id)) {printf("Identifier \"%s\" is not declared", $1); exit(0);};
         $$ = $2;
     }
 ;
