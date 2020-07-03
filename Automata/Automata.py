@@ -48,7 +48,7 @@ class Otomat:
 
     def fill(self):
         '''
-            Điền hàm chuyển trạng thái rỗng
+            Đầy đủ hóa otomat
         '''
         for state in self.S:
             if state not in self.delta.keys():
@@ -259,43 +259,14 @@ def parse_input_file(filepath):
             Otomat
     '''
     f = open(filepath, 'r')
-    S = f.readline()[:-1].split(',')
-    sigma = f.readline()[:-1].split(',')
-    S0 = f.readline()[:-1]
-    if S0 not in S:
-        print('Lỗi: Trạng thái bắt đầu không thuộc S')
-        exit()
-    F = f.readline()[:-1].split(',')
-    for state in F:
-        if state not in S:
-            print('Lỗi: Trạng thái kết thúc {} không thuộc trạng thái S'.format(state))
-            exit()
-    delta = {}
-    for line in f:
-        tmp = []
-        if line[-1] == '\n':
-            tmp = line[:-1].split(',')
-        else:
-            tmp = line.split(',')
-
-        if len(tmp) < 3:
-            print('Lỗi: {}. Hàm chuyển trạng thái phải có dạng state,symbol,state1,state2,...'.format(line))
-            exit()
-
-        for i in range(len(tmp)):
-            if i == 1:
-                continue
-            if tmp[i] not in S:
-                print('Lỗi: Trạng thái {} không thuộc S'.format(tmp[0]))
-                exit()
-        if tmp[1] not in sigma and tmp != '$':
-            print('Lỗi: {} không thuộc sigma'.format(tmp[1]))
-            exit()
-        else:
-            if tmp[0] not in delta.keys():
-                delta[tmp[0]] = {}
-            delta[tmp[0]][tmp[1]] = tmp[2:]
-    return Otomat(sigma, S, S0, F, delta)
+    data = json.load(f)
+    f.close()
+    fields = ["sigma", "S", "S0", "F", "delta"]
+    for field in fields:
+        if field not in data.keys():
+            print(f"Thiếu thành phần {field}. Xin kiểm tra lại file đầu vào")
+            exit(0)
+    return Otomat(**data)
 
 def main():
     filepath = input('Nhập tên file đầu vào: ')
