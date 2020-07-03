@@ -1391,7 +1391,7 @@ yyreduce:
   case 10:
 /* Line 1792 of yacc.c  */
 #line 51 "test.y"
-    { (yyval.ival) = value / (yyvsp[(2) - (2)].ival); }
+    { if ((yyvsp[(2) - (2)].ival) == 0){printf("Cannot divide by zero"); exit(0);}; (yyval.ival) = value / (yyvsp[(2) - (2)].ival); }
     break;
 
 

@@ -48,7 +48,7 @@ cmi:
     OP_PLUS NUM     { $$ = value + $2; }
 |   OP_MINUS NUM    { $$ = value - $2; }
 |   OP_MUL NUM      { $$ = value * $2; }
-|   OP_DIV NUM      { $$ = value / $2; }
+|   OP_DIV NUM      { if ($2 == 0){printf("Cannot divide by zero"); exit(0);}; $$ = value / $2; }
 ;
 %%
 
