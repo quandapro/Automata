@@ -266,7 +266,8 @@ def parse_input_file(filepath):
         if field not in data.keys():
             print(f"Thiếu thành phần {field}. Xin kiểm tra lại file đầu vào")
             exit(0)
-    return Otomat(**data)
+    otomat = {key:data[key] for key in fields}
+    return Otomat(**otomat)
 
 def main():
     filepath = input('Nhập tên file đầu vào: ')
