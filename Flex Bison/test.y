@@ -57,7 +57,7 @@ int yyerror(char *s)
     fprintf(stderr, "%s\n", s);
 }
 
-int main()
+int main(int argc, char **argv)
 {
     if (yyparse())
         fprintf(stderr, "Successful parsing.\n");
