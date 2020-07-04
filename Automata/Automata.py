@@ -7,11 +7,19 @@ def remove_duplicates(arr_list):
 
 class Otomat:
     def __init__(self, sigma, S, S0, F, delta):
+        # Check if input automata is valid
         assert len(sigma) > 0, 'Sigma must not be empty'
         assert len(S) > 0, 'S must not be empty'
         assert S0 in S, f'Initial state {S0} is not in S'
         for state in F:
             assert state in S, f'Final state {state} is not in S'
+        for state in delta.keys():
+            assert state in S, f'Unknown state in transition table: {state}'
+            for symbol in delta[state].keys():
+                assert symbol in sigma, f'Unknown symbol in transition table: {symbol}, in state {state}'
+                for next_state in delta[state][symbol]:
+                    assert next_state in S, f'Unknown state in transition table: {next_state}, in delta[{state}][{symbol}]'
+
         self.sigma = remove_duplicates(sigma)
         self.S = remove_duplicates(S)
         self.S0 = S0 
@@ -41,7 +49,10 @@ class Otomat:
                         if state in self.delta[other_state][symbol]:
                             self.delta[other_state][symbol] += self.delta[state]['$']
 
-                del self.delta[state]['$']                
+                del self.delta[state]['$']
+                
+        if '$' in self.sigma:
+            self.sigma.remove('$')                
 
     def fill(self):
         '''
