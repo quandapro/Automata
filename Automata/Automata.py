@@ -256,7 +256,7 @@ class Otomat:
 
 def parse_input_file(filepath):
     '''
-        Đọc otomat từ 1 tệp và trả về otomat đó
+        Đọc otomat từ 1 file json và trả về otomat đó
         Args: 
             filepath: path to file that will be parsed
         Returns:
