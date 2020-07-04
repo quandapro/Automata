@@ -11,10 +11,10 @@ class Otomat:
         assert S0 in S, f'Trạng thái khởi đầu {S0} không thuộc S'
         for state in F:
             assert state in S, f'Trạng thái kết {state} không thuộc S'
-        self.sigma = sigma
-        self.S = S 
+        self.sigma = list(set(sigma))
+        self.S = list(set(S)) 
         self.S0 = S0 
-        self.F = F 
+        self.F = list(set(F)) 
         self.delta = delta 
         self.extraState = 'ES'
 
@@ -156,6 +156,9 @@ class Otomat:
         num_of_states = len(self.S)
         table = np.zeros((num_of_states, num_of_states), dtype=np.bool)
         while True:
+            '''
+                Lặp đến khi không thể đánh dấu
+            '''
             last = True
             for i in range(num_of_states):
                 state_A = self.S[i]
@@ -177,6 +180,7 @@ class Otomat:
                                 break
             if last:
                 break  
+
         return table
 
     def combine_unmarked_pairs(self, table):
@@ -258,9 +262,9 @@ def parse_input_file(filepath):
         Returns:
             Otomat
     '''
-    f = open(filepath, 'r')
-    data = json.load(f)
-    f.close()
+    with open(filepath, 'r') as f:
+        data = json.load(f)
+        f.close()
     fields = ["sigma", "S", "S0", "F", "delta"]
     for field in fields:
         if field not in data.keys():
