@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern FILE *yyin;
+
 int yylex();
 int yyerror(char *s);
 char id[20];
@@ -57,8 +59,15 @@ int yyerror(char *s)
     fprintf(stderr, "%s\n", s);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
+    if (argc == 2){
+		yyin = fopen(argv[1], "r");
+		if(!yyin){
+			fprintf(stderr, "Error reading file %s\n", argv[1]);
+			exit(1);
+		}
+	}
     if (yyparse())
         fprintf(stderr, "Successful parsing.\n");
     else
