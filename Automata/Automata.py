@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import numpy as np
 
 def remove_duplicates(arr_list):
@@ -5,11 +7,11 @@ def remove_duplicates(arr_list):
 
 class Otomat:
     def __init__(self, sigma, S, S0, F, delta):
-        assert len(sigma) > 0, 'Bảng chữ cái sigma rỗng'
-        assert len(S) > 0, 'Tập trạng thái S rỗng'
-        assert S0 in S, f'Trạng thái khởi đầu {S0} không thuộc S'
+        assert len(sigma) > 0, 'Sigma must not be empty'
+        assert len(S) > 0, 'S must not be empty'
+        assert S0 in S, f'Initial state {S0} is not in S'
         for state in F:
-            assert state in S, f'Trạng thái kết {state} không thuộc S'
+            assert state in S, f'Final state {state} is not in S'
         self.sigma = remove_duplicates(sigma)
         self.S = remove_duplicates(S)
         self.S0 = S0 
@@ -19,7 +21,7 @@ class Otomat:
 
     def remove_epsilon(self):
         '''
-            Xóa các cạnh epsilon
+            Remove epsilon edges
         '''
         for state in self.S:
             if '$' in self.delta[state].keys():
@@ -43,7 +45,7 @@ class Otomat:
 
     def fill(self):
         '''
-            Đầy đủ hóa otomat
+            Fill Automata
         '''
         for state in self.S:
             if state not in self.delta.keys():
@@ -60,20 +62,20 @@ class Otomat:
 
     def DFA(self):
         '''
-            Đầy đủ và đơn định hóa otomat
+            To deterministic finite automation
         '''
-        # Đầy đủ hóa otomat
+        # First we must fill automata
         self.fill()
 
-        # Khử epsilon
+        # Remove epsilon edges
         self.remove_epsilon()
         
-        # Đơn định hóa
+        # Process start here
         queue = [self.S0]
         visited = []
         while len(queue) > 0:
             current_state = queue.pop(0)
-            # Nếu đã thăm trạng thái hiện tại thì không làm gì cả
+            # If already visited current state, do nothing
             if current_state in visited:
                 continue 
             visited.append(current_state)
@@ -85,20 +87,20 @@ class Otomat:
                         current = targets.pop(i)
                         targets += current.split('_')
                 targets = remove_duplicates(targets)
-                # Trường hợp hàm chuyển trạng thái delta(current_state, symbol) không đơn định
+                # If delta(current_state, symbol) is not deterministic
                 if len(targets) > 1:
                     # ['S1', 'S2'] -> 'S1_S2'
                     new_state = '_'.join(targets)
-                    # Nếu đã thăm trạng thái này rồi thì không thăm lại
+                    # If already visited this new_state
                     if new_state in visited:
-                        # Thay kết quả của hàm chuyển trạng thái cũ thành trạng thái mới
+                        # Replace current delta(current_state, symbol) with new_state
                         self.delta[current_state][symbol] = [new_state]
                         continue
                     
-                    # Khởi tạo hàm chuyển trạng thái cho trạng thái mới
+                    # Create new transition table for new_state
                     self.delta[new_state] = {}
 
-                    # Xây dựng hàm chuyển trạng thái cho trạng thái mới
+                    # Fill transition table for new_state
                     for character in self.sigma:
                         new_targets_for_new_state = []
                         for state in targets:
@@ -108,49 +110,49 @@ class Otomat:
                         new_targets_for_new_state = remove_duplicates(new_targets_for_new_state)
                         self.delta[new_state][character] = new_targets_for_new_state
                     
-                    # Thay kết quả của hàm chuyển trạng thái cũ thành trạng thái mới
+                    # Replace current delta(current_state, symbol) with new_state
                     self.delta[current_state][symbol] = [new_state]
 
-                    # Thêm trạng thái mới vào danh sách chờ
+                    # Append new state to queue
                     queue.append(new_state)
 
-                # Nếu hàm chuyển trạng thái delta(current_state, symbol) đơn định thì thêm vào queue và không làm gì cả
+                # Do nothing if current_state is already deterministic
                 elif len(targets) == 1:
                     queue.append(targets[0])
 
-        # Xóa các trạng thái thừa
+        # Remove excess states
         for state in self.S:
             if state not in visited:
                 del self.delta[state]
 
         self.S = sorted(visited)
 
-        # Thêm các trạng thái kết thúc mới
+        # Append new final states
         for state in self.S:
             for f in self.F:
                 if f in state:
                     if state not in self.F:
                         self.F.append(state)
 
-        # Xóa các trạng thái kết thúc không tồn tại trong tập trạng thái mới
+        # Remove final states which is not in new set of states
         for f in self.F:
             if f not in self.S:
                 self.F.remove(f)
 
     def fill_table(self):
         '''
-            Điền bảng đánh dấu các trạng thái thỏa mãn: 
-            table(A, B) = 1 nếu chỉ A hoặc B không thuộc F, hoặc tồn tại chữ cái e thỏa mãn table(delta(A, e), delta(B, e)) = 1
+            Table filling, mark pairs of states satisfy: 
+            table(A, B) = 1 if A nor B is not in F, or exists a symbol such that table(delta(A, symbol), delta(B, symbol)) = 1
             Returns:
-                table: Bảng đánh dấu trạng thái
+                table: Filled table
         '''
         num_of_states = len(self.S)
         table = np.zeros((num_of_states, num_of_states), dtype=np.bool)
         while True:
             '''
-                Lặp đến khi không thể đánh dấu
+                Loop until can't mark any pair of state
             '''
-            last = True
+            stop = True
             for i in range(num_of_states):
                 state_A = self.S[i]
                 for j in range(num_of_states):
@@ -158,7 +160,7 @@ class Otomat:
                     if table[i, j]:
                         continue
                     if state_A in self.F and state_B not in self.F:
-                        last = False
+                        stop = False
                         table[i, j] = 1
                     else:
                         for symbol in self.sigma:
@@ -166,21 +168,21 @@ class Otomat:
                             next_state_B = self.delta[state_B][symbol][0]
                             if table[self.S.index(next_state_A), self.S.index(next_state_B)] \
                               or table[self.S.index(next_state_B), self.S.index(next_state_A)]:
-                                last = False
+                                stop = False
                                 table[i, j] = 1
                                 break
-            if last:
+            if stop:
                 break  
 
         return table
 
     def combine_unmarked_pairs(self, table):
         '''
-            Ghép các cặp trạng thái không được đánh dấu
+            Combine unmarked pairs into groups
             Args:
-                table: Bảng đánh dấu các cặp trạng thái
+                table: Marking table
             Returns:
-                unmarked_states_group: Tập hợp các nhóm trạng thái chưa được đánh dấu
+                unmarked_states_group: Unmarked states group
         '''
         unmarked_states_group = []
         num_of_states = len(self.S)
@@ -205,16 +207,16 @@ class Otomat:
 
     def minimize(self):
         '''
-            Tối thiểu hóa otomat sử dụng phương pháp điền bảng
+            Automata minimization using table filling method
             https://www.youtube.com/watch?v=UiXkJUTkp44
         '''
         self.DFA()
         table = self.fill_table()
         unmarked_states_group = self.combine_unmarked_pairs(table)
 
-        # Xây dựng otomat mới
+        # Build new automata
         for group in unmarked_states_group:
-            # Tạo trạng thái mới và thay thế trạng thái cũ
+            # Create new state and replace old state (Ex: C_D_E to replace C, D, E) 
             new_state = '_'.join(group)
             self.S.append(new_state)
             self.delta[new_state] = {}
@@ -226,7 +228,7 @@ class Otomat:
                     self.delta[new_state][symbol] += self.delta[state][symbol]
                 del self.delta[state]
 
-        # Thay thế trạng thái cũ trong bảng chuyển trạng thái
+        # Replace old state in transition table delta
         for state in self.S:
             for symbol in self.sigma:
                 for idx, trans_state in enumerate(self.delta[state][symbol]):
@@ -237,7 +239,7 @@ class Otomat:
                 self.delta[state][symbol] = remove_duplicates(self.delta[state][symbol])
 
 
-        # Thay thế trạng thái cũ trong tập trạng thái kết
+        # Replace old final state (Ex: C_D_E to replace C, D, E) 
         for idx, final_state in enumerate(self.F):
             if final_state not in self.S:
                 for state in self.S:
@@ -246,9 +248,9 @@ class Otomat:
         self.F = remove_duplicates(self.F)
 
     def printOtomat(self):
-        print('Tập trạng thái: ', self.S)
-        print('Tập trạng thái kết: ', self.F)
-        print('Bảng chuyển trạng thái:')
+        print('States: ', self.S)
+        print('Final states: ', self.F)
+        print('Transitions table:')
         print('{:>10}'.format('delta'), end='')
         for symbol in self.sigma:
             print('{:>10}'.format(symbol), end='')
