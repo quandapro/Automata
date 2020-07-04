@@ -1,9 +1,8 @@
 import numpy as np
-import json
 
-'''
-    Thuật toán tối thiểu hóa Otomat
-'''
+def remove_duplicates(arr_list):
+    return sorted(list(set(arr_list)))
+
 class Otomat:
     def __init__(self, sigma, S, S0, F, delta):
         assert len(sigma) > 0, 'Bảng chữ cái sigma rỗng'
@@ -11,16 +10,12 @@ class Otomat:
         assert S0 in S, f'Trạng thái khởi đầu {S0} không thuộc S'
         for state in F:
             assert state in S, f'Trạng thái kết {state} không thuộc S'
-        self.sigma = list(set(sigma))
-        self.S = list(set(S)) 
+        self.sigma = remove_duplicates(sigma)
+        self.S = remove_duplicates(S)
         self.S0 = S0 
-        self.F = list(set(F)) 
+        self.F = remove_duplicates(F)
         self.delta = delta 
         self.extraState = 'ES'
-
-    '''
-        Đơn định hóa otomat
-    '''
 
     def remove_epsilon(self):
         '''
@@ -36,7 +31,7 @@ class Otomat:
                         if state not in self.F:
                             self.F.append(state)
                 for symbol in self.sigma:
-                    self.delta[state][symbol] = list(set(self.delta[state][symbol]))
+                    self.delta[state][symbol] = remove_duplicates(self.delta[state][symbol])
 
                 # S0 -> $S2, S1 -> aS0. -> S1 -> aS2
                 for other_state in self.S:
@@ -89,11 +84,11 @@ class Otomat:
                     if '_' in targets[i]:
                         current = targets.pop(i)
                         targets += current.split('_')
-                targets = list(set(targets))
+                targets = remove_duplicates(targets)
                 # Trường hợp hàm chuyển trạng thái delta(current_state, symbol) không đơn định
                 if len(targets) > 1:
                     # ['S1', 'S2'] -> 'S1_S2'
-                    new_state = '_'.join(sorted(targets))
+                    new_state = '_'.join(targets)
                     # Nếu đã thăm trạng thái này rồi thì không thăm lại
                     if new_state in visited:
                         # Thay kết quả của hàm chuyển trạng thái cũ thành trạng thái mới
@@ -110,7 +105,7 @@ class Otomat:
                             for target in self.delta[state][character]:
                                 if target not in new_targets_for_new_state:
                                     new_targets_for_new_state.append(target)
-                        new_targets_for_new_state = list(set(new_targets_for_new_state))
+                        new_targets_for_new_state = remove_duplicates(new_targets_for_new_state)
                         self.delta[new_state][character] = new_targets_for_new_state
                     
                     # Thay kết quả của hàm chuyển trạng thái cũ thành trạng thái mới
@@ -142,10 +137,6 @@ class Otomat:
             if f not in self.S:
                 self.F.remove(f)
 
-    '''
-        Tối thiểu hóa otomat
-    '''
-
     def fill_table(self):
         '''
             Điền bảng đánh dấu các trạng thái thỏa mãn: 
@@ -164,19 +155,19 @@ class Otomat:
                 state_A = self.S[i]
                 for j in range(num_of_states):
                     state_B = self.S[j]
-                    if table[i][j]:
+                    if table[i, j]:
                         continue
                     if state_A in self.F and state_B not in self.F:
                         last = False
-                        table[i][j] = 1
+                        table[i, j] = 1
                     else:
                         for symbol in self.sigma:
                             next_state_A = self.delta[state_A][symbol][0]
                             next_state_B = self.delta[state_B][symbol][0]
-                            if table[self.S.index(next_state_A)][self.S.index(next_state_B)] \
-                              or table[self.S.index(next_state_B)][self.S.index(next_state_A)]:
+                            if table[self.S.index(next_state_A), self.S.index(next_state_B)] \
+                              or table[self.S.index(next_state_B), self.S.index(next_state_A)]:
                                 last = False
-                                table[i][j] = 1
+                                table[i, j] = 1
                                 break
             if last:
                 break  
@@ -197,8 +188,8 @@ class Otomat:
             for j in range(num_of_states):
                 if i == j:
                     continue
-                if not table[i][j]:
-                    if [self.S[i], self.S[j]] not in unmarked_states_group\
+                if not table[i, j]:
+                    if [self.S[i], self.S[j]] not in unmarked_states_group \
                         and [self.S[j], self.S[i]] not in unmarked_states_group:
                         # [C, D], [D, E] -> [C, D, E]
                         flag = False
@@ -206,7 +197,7 @@ class Otomat:
                             if self.S[i] in unmarked_states_group[k] or self.S[j] in unmarked_states_group[k]:
                                 flag = True
                                 unmarked_states_group[k] += [self.S[i], self.S[j]]
-                                unmarked_states_group[k] = list(set(unmarked_states_group[k]))
+                                unmarked_states_group[k] = remove_duplicates(unmarked_states_group[k])
                                 break
                         if not flag:
                             unmarked_states_group.append([self.S[i], self.S[j]])
@@ -243,7 +234,7 @@ class Otomat:
                         for new_state in self.S:
                             if trans_state in new_state:
                                 self.delta[state][symbol][idx] = new_state
-                self.delta[state][symbol] = list(set(self.delta[state][symbol]))    
+                self.delta[state][symbol] = remove_duplicates(self.delta[state][symbol])
 
 
         # Thay thế trạng thái cũ trong tập trạng thái kết
@@ -252,88 +243,27 @@ class Otomat:
                 for state in self.S:
                     if final_state in state:
                         self.F[idx] = state
-        self.F = list(set(self.F))
+        self.F = remove_duplicates(self.F)
 
-def parse_input_file(filepath):
-    '''
-        Đọc otomat từ 1 file json và trả về otomat đó
-        Args: 
-            filepath: path to file that will be parsed
-        Returns:
-            Otomat
-    '''
-    with open(filepath, 'r') as f:
-        data = json.load(f)
-        f.close()
-    fields = ["sigma", "S", "S0", "F", "delta"]
-    for field in fields:
-        if field not in data.keys():
-            print(f"Thiếu thành phần {field}. Xin kiểm tra lại file đầu vào")
-            exit(0)
-    otomat = {key:data[key] for key in fields}
-    return Otomat(**otomat)
-
-def main():
-    filepath = input('Nhập tên file đầu vào: ')
-    otomat = parse_input_file(filepath)
-    print('Tập trạng thái ban đầu: ', otomat.S)
-    print('Tập trạng thái kết ban đầu: ', otomat.F)
-    print('Bảng chuyển trạng thái ban đầu:')
-    print('{:>10}'.format('delta'), end='')
-    for symbol in otomat.sigma:
-        print('{:>10}'.format(symbol), end='')
-    print()
-
-    for state in otomat.S:
-        print('{:>10}'.format(state), end='')
-        for symbol in otomat.sigma:
-            if symbol not in otomat.delta[state]:
-                print('{:>10}'.format('-'), end='')
-            else:
-                print('{:>10}'.format(','.join(otomat.delta[state][symbol])), end='')
-        print()
-    print('\n-------------------------------------------\n')
-
-    # Đơn định hóa
-    # otomat.DFA()
-
-    # print('Tập trạng thái sau đơn định hóa: ', otomat.S)
-    # print('Tập trạng thái kết sau đơn định hóa: ', otomat.F)
-    # print('Bảng chuyển trạng thái sau đơn định hóa:')
-    # print('{:>10}'.format('delta'), end='')
-    # for symbol in otomat.sigma:
-    #     print('{:>10}'.format(symbol), end='')
-    # print()
-
-    # for state in otomat.S:
-    #     print('{:>10}'.format(state), end='')
-    #     for symbol in otomat.sigma:
-    #         if symbol not in otomat.delta[state]:
-    #             print('{:>10}'.format('-'), end='')
-    #         else:
-    #             print('{:>10}'.format(otomat.delta[state][symbol][0]), end='')
-    #     print()
-
-    # Tối thiểu hóa
-    otomat.minimize()
-    print('Tập trạng thái sau tối thiểu hóa: ', otomat.S)
-    print('Tập trạng thái kết sau tối thiểu hóa: ', otomat.F)
-    print('Bảng chuyển trạng thái sau tối thiểu hóa:')
-    print('{:>10}'.format('delta'), end='')
-    for symbol in otomat.sigma:
-        print('{:>10}'.format(symbol), end='')
-    print()
-
-    for state in otomat.S:
-        print('{:>10}'.format(state), end='')
-        for symbol in otomat.sigma:
-            if symbol not in otomat.delta[state]:
-                print('{:>10}'.format('-'), end='')
-            else:
-                print('{:>10}'.format(otomat.delta[state][symbol][0]), end='')
+    def printOtomat(self):
+        print('Tập trạng thái: ', self.S)
+        print('Tập trạng thái kết: ', self.F)
+        print('Bảng chuyển trạng thái:')
+        print('{:>10}'.format('delta'), end='')
+        for symbol in self.sigma:
+            print('{:>10}'.format(symbol), end='')
         print()
 
-main()
+        for state in self.S:
+            print('{:>10}'.format(state), end='')
+            for symbol in self.sigma:
+                if symbol not in self.delta[state]:
+                    print('{:>10}'.format('-'), end='')
+                else:
+                    print('{:>10}'.format(','.join(self.delta[state][symbol])), end='')
+            print()
+        print('\n-------------------------------------------\n')
+
                 
 
     
