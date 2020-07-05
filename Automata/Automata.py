@@ -112,15 +112,44 @@ class Otomat:
                 flag = flag or self.can_reach_final(next_state, visited)
         return flag
 
+    def all_reachable_state(self, state, visited=[]):
+        visited.append(state)
+        for symbol in self.sigma:
+            if len(self.delta[state][symbol]) == 1:
+                next_state = self.delta[state][symbol][0]
+                if next_state in visited:
+                    continue
+                visited.append(next_state)
+                visited += self.all_reachable_state(next_state, visited)
+        return visited
+
     def minimize(self):
         '''
             Automata minimization using table filling method
             https://www.youtube.com/watch?v=UiXkJUTkp44
         '''             
+        # First remove all unreachable states
+        reachable = remove_duplicates(self.all_reachable_state(self.S0))
+        self.S = reachable
+        unreachable = []
+        for state in self.delta.keys():
+            if state not in self.S:
+                unreachable.append(state)
+        
+        for state in unreachable:
+            del self.delta[state]
+
+        for state in self.S:
+            for symbol in self.sigma:
+                if len(self.delta[state][symbol]) == 1:
+                    if self.delta[state][symbol][0] in unreachable:
+                        self.delta[state][symbol] = []
+
+        # Fill table
         table = self.fill_table()
         unmarked_states_group = self.combine_unmarked_pairs(table)
 
-        # Build new automata
+        # Build new automata with new states
         for group in unmarked_states_group:
             # Create new state and replace old state (Ex: C_D_E to replace C, D, E) 
             new_state = '_'.join(group)
