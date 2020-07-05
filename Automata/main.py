@@ -29,11 +29,6 @@ def main():
     print("Initial Automata")
     otomat.printOtomat()
 
-    # DFA
-    # otomat.DFA()
-    # print("Otomat sau khi đơn định hóa")
-    # otomat.printOtomat()
-
     # Minimization
     otomat.minimize()
     print("Minimized Automata")

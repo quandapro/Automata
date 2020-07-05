@@ -17,6 +17,7 @@ class Otomat:
             assert state in S, f'Unknown state in transition table: {state}'
             for symbol in delta[state].keys():
                 assert symbol in sigma, f'Unknown symbol in transition table: {symbol}, in state {state}'
+                assert len(delta[state][symbol]) < 2, f'Automata is not deterministic (delta[{state}][{symbol}] has len of {len(delta[state][symbol])})'
                 for next_state in delta[state][symbol]:
                     assert next_state in S, f'Unknown state in transition table: {next_state}, in delta[{state}][{symbol}]'
 
@@ -25,130 +26,7 @@ class Otomat:
         self.S0 = S0 
         self.F = remove_duplicates(F)
         self.delta = delta 
-        self.extraState = 'ES'
-
-    def remove_epsilon(self):
-        '''
-            Remove epsilon edges
-        '''
-        for state in self.S:
-            if '$' in self.delta[state].keys():
-                target_states = self.delta[state]['$']
-                for t_state in target_states:
-                    for symbol in self.sigma:
-                        self.delta[state][symbol] += self.delta[t_state][symbol]
-                    if t_state in self.F:
-                        if state not in self.F:
-                            self.F.append(state)
-                for symbol in self.sigma:
-                    self.delta[state][symbol] = remove_duplicates(self.delta[state][symbol])
-
-                # S0 -> $S2, S1 -> aS0. -> S1 -> aS2
-                for other_state in self.S:
-                    for symbol in self.delta[other_state].keys():
-                        if state in self.delta[other_state][symbol]:
-                            self.delta[other_state][symbol] += self.delta[state]['$']
-
-                del self.delta[state]['$']
-                
-        if '$' in self.sigma:
-            self.sigma.remove('$')                
-
-    def fill(self):
-        '''
-            Fill Automata
-        '''
-        for state in self.S:
-            if state not in self.delta.keys():
-                self.delta[state] = {}
-            for symbol in self.sigma:
-                if symbol not in self.delta[state].keys():
-                    self.delta[state][symbol] = [self.extraState]
-                    if self.extraState not in self.S:
-                        self.S.append(self.extraState)
-                elif len(self.delta[state][symbol]) == 0:
-                    self.delta[state][symbol] = [self.extraState]
-                    if self.extraState not in self.S:
-                        self.S.append(self.extraState)
-
-    def DFA(self):
-        '''
-            To deterministic finite automation
-        '''
-        # First we must fill automata
-        self.fill()
-
-        # Remove epsilon edges
-        self.remove_epsilon()
-        
-        # Process start here
-        queue = [self.S0]
-        visited = []
-        while len(queue) > 0:
-            current_state = queue.pop(0)
-            # If already visited current state, do nothing
-            if current_state in visited:
-                continue 
-            visited.append(current_state)
-
-            for symbol in self.sigma:
-                targets = self.delta[current_state][symbol]
-                for i in range(len(targets)):
-                    if '_' in targets[i]:
-                        current = targets.pop(i)
-                        targets += current.split('_')
-                targets = remove_duplicates(targets)
-                # If delta(current_state, symbol) is not deterministic
-                if len(targets) > 1:
-                    # ['S1', 'S2'] -> 'S1_S2'
-                    new_state = '_'.join(targets)
-                    # If already visited this new_state
-                    if new_state in visited:
-                        # Replace current delta(current_state, symbol) with new_state
-                        self.delta[current_state][symbol] = [new_state]
-                        continue
-                    
-                    # Create new transition table for new_state
-                    self.delta[new_state] = {}
-
-                    # Fill transition table for new_state
-                    for character in self.sigma:
-                        new_targets_for_new_state = []
-                        for state in targets:
-                            for target in self.delta[state][character]:
-                                if target not in new_targets_for_new_state:
-                                    new_targets_for_new_state.append(target)
-                        new_targets_for_new_state = remove_duplicates(new_targets_for_new_state)
-                        self.delta[new_state][character] = new_targets_for_new_state
-                    
-                    # Replace current delta(current_state, symbol) with new_state
-                    self.delta[current_state][symbol] = [new_state]
-
-                    # Append new state to queue
-                    queue.append(new_state)
-
-                # Do nothing if current_state is already deterministic
-                elif len(targets) == 1:
-                    queue.append(targets[0])
-
-        # Remove excess states
-        for state in self.S:
-            if state not in visited:
-                del self.delta[state]
-
-        self.S = sorted(visited)
-
-        # Append new final states
-        for state in self.S:
-            for f in self.F:
-                if f in state:
-                    if state not in self.F:
-                        self.F.append(state)
-
-        # Remove final states which is not in new set of states
-        for f in self.F:
-            if f not in self.S:
-                self.F.remove(f)
+        self.extraState = 'ES'        
 
     def fill_table(self):
         '''
@@ -175,6 +53,8 @@ class Otomat:
                         table[i, j] = 1
                     else:
                         for symbol in self.sigma:
+                            if len(self.delta[state_A][symbol]) * len(self.delta[state_B][symbol]) == 0:
+                                continue
                             next_state_A = self.delta[state_A][symbol][0]
                             next_state_B = self.delta[state_B][symbol][0]
                             if table[self.S.index(next_state_A), self.S.index(next_state_B)] \
@@ -216,12 +96,27 @@ class Otomat:
                             unmarked_states_group.append([self.S[i], self.S[j]])
         return unmarked_states_group
 
+    def can_reach_final(self, state, visited=[]):
+        '''
+            Check if a state can reach final state
+        '''
+        flag = False
+        for symbol in self.delta[state].keys():
+            if len(self.delta[state][symbol]) == 1:
+                next_state = self.delta[state][symbol][0]
+                if next_state in visited:
+                    continue
+                if next_state in self.F:
+                    return True
+                visited.append(next_state)
+                flag = flag or self.can_reach_final(next_state, visited)
+        return flag
+
     def minimize(self):
         '''
             Automata minimization using table filling method
             https://www.youtube.com/watch?v=UiXkJUTkp44
         '''
-        self.DFA()
         table = self.fill_table()
         unmarked_states_group = self.combine_unmarked_pairs(table)
 
@@ -249,7 +144,6 @@ class Otomat:
                                 self.delta[state][symbol][idx] = new_state
                 self.delta[state][symbol] = remove_duplicates(self.delta[state][symbol])
 
-
         # Replace old final state (Ex: C_D_E to replace C, D, E) 
         for idx, final_state in enumerate(self.F):
             if final_state not in self.S:
@@ -257,6 +151,18 @@ class Otomat:
                     if final_state in state:
                         self.F[idx] = state
         self.F = remove_duplicates(self.F)
+
+        # Remove state that cannot reach final state
+        for state in self.S:
+            if not self.can_reach_final(state):
+                self.S.remove(state)
+                del self.delta[state]
+
+        for state in self.S:
+            for symbol in self.delta[state].keys():
+                if len(self.delta[state][symbol]) == 1:
+                    if self.delta[state][symbol][0] not in self.S:
+                        self.delta[state][symbol] = []
 
     def printOtomat(self):
         print('States: ', self.S)
