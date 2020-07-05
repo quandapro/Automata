@@ -454,8 +454,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    31,    31,    32,    36,    40,    43,    50,    51,    52,
-      53
+       0,    31,    31,    32,    36,    40,    43,    50,    51,    53,
+      54
 };
 #endif
 
@@ -1381,24 +1381,27 @@ yyreduce:
   case 8:
 /* Line 1792 of yacc.c  */
 #line 51 "test.y"
-    { (yyval.ival) = value - (yyvsp[(2) - (2)].ival); }
+    { printf("%d\n", value - (yyvsp[(2) - (2)].ival)); 
+                      exit(0); }
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 52 "test.y"
+#line 53 "test.y"
     { (yyval.ival) = value * (yyvsp[(2) - (2)].ival); }
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 53 "test.y"
-    { if ((yyvsp[(2) - (2)].ival) == 0){printf("Cannot divide by zero"); exit(0);}; (yyval.ival) = value / (yyvsp[(2) - (2)].ival); }
+#line 54 "test.y"
+    { if ((yyvsp[(2) - (2)].ival) == 0){printf("Cannot divide by zero"); exit(0);}; 
+                      printf("%f\n", value*1.0 / (yyvsp[(2) - (2)].ival)); 
+                      exit(0); }
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 1402 "test.tab.c"
+#line 1405 "test.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1630,7 +1633,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 55 "test.y"
+#line 58 "test.y"
 
 
 int yyerror(char *s)

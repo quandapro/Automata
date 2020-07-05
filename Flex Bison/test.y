@@ -48,9 +48,12 @@ Expression:
 
 cmi: 
     OP_PLUS NUM     { $$ = value + $2; }
-|   OP_MINUS NUM    { $$ = value - $2; }
+|   OP_MINUS NUM    { printf("%d\n", value - $2); 
+                      exit(0); }
 |   OP_MUL NUM      { $$ = value * $2; }
-|   OP_DIV NUM      { if ($2 == 0){printf("Cannot divide by zero"); exit(0);}; $$ = value / $2; }
+|   OP_DIV NUM      { if ($2 == 0){printf("Cannot divide by zero"); exit(0);}; 
+                      printf("%f\n", value*1.0 / $2); 
+                      exit(0); }
 ;
 %%
 

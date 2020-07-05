@@ -11,7 +11,7 @@ void showError();
 %}
 
 whitespace  [ \t]
-number      [0-9]+
+number      0|[1-9][0-9]*
 identifier  [_a-zA-Z][_a-zA-Z0-9]{0,30}
 
 %%
