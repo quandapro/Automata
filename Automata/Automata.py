@@ -116,7 +116,7 @@ class Otomat:
         '''
             Automata minimization using table filling method
             https://www.youtube.com/watch?v=UiXkJUTkp44
-        '''
+        '''             
         table = self.fill_table()
         unmarked_states_group = self.combine_unmarked_pairs(table)
 
@@ -128,6 +128,8 @@ class Otomat:
             self.delta[new_state] = {}
             for state in group:
                 self.S.remove(state)
+                if state == self.S0:
+                    self.S0 = new_state
                 for symbol in self.sigma:
                     if symbol not in self.delta[new_state]:
                         self.delta[new_state][symbol] = []
@@ -166,6 +168,7 @@ class Otomat:
 
     def printOtomat(self):
         print('States: ', self.S)
+        print("Initial state: ", self.S0)
         print('Final states: ', self.F)
         print('Transitions table:')
         print('{:>10}'.format('delta'), end='')
@@ -183,6 +186,5 @@ class Otomat:
             print()
         print('\n-------------------------------------------\n')
 
-                
 
-    
+        
